@@ -18,10 +18,18 @@ public class GetUniversitySteps {
         RestAssured.baseURI = baseURL;
     }
 
-    @When("the user sends a GET request to the API endpoint {string}")
-    public void sendGet(String resource){
+    @When("the user sends a GET request to the API endpoint")
+    public void sendGet(){
         response = RestAssured.given()
-                .get(resource);
+                .queryParam("country","South Africa")
+                .get("/search");
+        String token = RestAssured.given()
+                    .auth().basic("str","str")
+                    .header("Content-Type", "application/json")
+                    .body("str")
+                    .post()
+                    .body().jsonPath().getString("token");
+
     }
 
     @Then("the user should receive a successful response")
@@ -34,10 +42,8 @@ public class GetUniversitySteps {
 
     @Then("fetch the value of the university where the country is South Africa")
     public void fetUniversity(){
-        List<String> universities = response.then()
-                .extract()
-                .jsonPath()
-                .get();
+        List<String> universities = response.jsonPath()
+                .getList("name");
 
         System.out.println(universities);
     }
